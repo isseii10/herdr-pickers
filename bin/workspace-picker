@@ -14,29 +14,16 @@ require_fzf
 require jq zoxide
 
 ws_json="$("$herdr" workspace list)"
-recency="$(recency_json)"
 
-# Order (also the tie-break order while searching):
-#   1. open workspaces, most recently focused first (hooks/record-focus);
-#      the current one goes last, so the previous workspace is on top
-#   2. zoxide directories in zoxide's frecency order, minus the ones already
-#      open as a workspace (picking those would focus that workspace anyway)
 selected="$(
   {
-    jq -r --argjson recency "$recency" --arg blue "$blue" --arg green "$green" --arg reset "$reset" '
-      .result.workspaces
-      | sort_by(.focused, -($recency.ws[.workspace_id] // 0), .number)[]
-      | "ws\t\(.workspace_id)\t\($blue)󰙅\($reset)  \(.label)\(if .focused then "  \($green)󰄾 current\($reset)" else "" end)"
-    ' <<<"$ws_json"
-    # labels go through the environment: BSD awk rejects newlines in -v values
-    zoxide query -l | labels="$(jq -r '.result.workspaces[].label' <<<"$ws_json")" \
-      awk -v home="$HOME" -v yellow="$yellow" -v gray="$gray" -v reset="$reset" '
-      BEGIN { n = split(ENVIRON["labels"], l, "\n"); for (i = 1; i <= n; i++) open[l[i]] = 1 }
-      { d = $0; if (index(d, home) == 1) d = "~" substr(d, length(home) + 1);
-        n = split(d, p, "/"); if (p[n] in open) next
-        parent = substr(d, 1, length(d) - length(p[n]));
-        printf "dir\t%s\t%s󰱼%s  %s%s%s%s\n", $0, yellow, reset, gray, parent, reset, p[n] }'
-  } | fzf --ansi --delimiter='\t' --with-nth=3 --tiebreak=index --reverse --prompt='workspace> ' \
+    jq -r --arg blue "$blue" --arg green "$green" --arg reset "$reset" \
+      '.result.workspaces[] | "ws\t\(.workspace_id)\t\($blue)󰙅\($reset)  \(.label)\(if .focused then "  \($green)󰄾 current\($reset)" else "" end)"' <<<"$ws_json"
+    zoxide query -l | awk -v home="$HOME" -v yellow="$yellow" -v gray="$gray" -v reset="$reset" \
+      '{ d = $0; if (index(d, home) == 1) d = "~" substr(d, length(home) + 1);
+         n = split(d, p, "/"); parent = substr(d, 1, length(d) - length(p[n]));
+         printf "dir\t%s\t%s󰱼%s  %s%s%s%s\n", $0, yellow, reset, gray, parent, reset, p[n] }'
+  } | fzf --ansi --delimiter='\t' --with-nth=3 --no-sort --reverse --prompt='workspace> ' \
     --no-input --header='j/k: move  enter: select  /: search  q/esc: quit' \
     "${normal_mode_binds[@]}"
 )" || exit 0
@@ -47,9 +34,6 @@ value="$(cut -f2 <<<"$selected")"
 if [ "$kind" = "ws" ]; then
   exec "$herdr" workspace focus "$value"
 fi
-
-# Count the pick in zoxide so directories you open often move up.
-zoxide add "$value" 2>/dev/null || true
 
 label="$(basename "$value")"
 existing="$(jq -r --arg label "$label" '.result.workspaces[] | select(.label == $label) | .workspace_id' <<<"$ws_json" | head -n1)"

@@ -81,22 +81,3 @@ normal_mode_binds=(
   # clear-query does not work inside transform output, so it runs outside (no-op in normal mode)
   "--bind=esc:clear-query+transform:[ \"\$FZF_INPUT_STATE\" = enabled ] && echo hide-input || echo abort"
 )
-
-# --- recently used ------------------------------------------------------------
-# hooks/record-focus appends "<epoch>\t<workspace_id>\t<pane_id>" on every pane
-# focus. recency_json prints {"ws": {id: n}, "pane": {id: n}}, where n is the
-# line number of the latest focus of that id (higher = more recent; line order
-# beats the timestamp, which ties within a second). Empty maps when nothing is
-# recorded yet.
-focus_log="${HERDR_PLUGIN_STATE_DIR:-$HOME/.local/state/herdr/plugins/isseii10.herdr-pickers}/focus.log"
-recency_json() {
-  if [ ! -f "$focus_log" ]; then
-    echo '{"ws":{},"pane":{}}'
-    return
-  fi
-  awk -F'\t' '
-    NF == 3 { ws[$2] = NR; pane[$3] = NR }
-    function obj(a,   k, s, out) { s = ""; out = "{"; for (k in a) { out = out s "\"" k "\":" a[k]; s = "," } return out "}" }
-    END { printf "{\"ws\":%s,\"pane\":%s}\n", obj(ws), obj(pane) }
-  ' "$focus_log"
-}
