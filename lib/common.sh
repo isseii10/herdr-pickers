@@ -1,4 +1,5 @@
 # shellcheck shell=bash
+# shellcheck disable=SC2034 # the variables set here are used by the scripts that source this file
 # Shared setup for the pickers: config, PATH, dependency checks, colors, fzf keys.
 
 herdr="${HERDR_BIN_PATH:-herdr}"

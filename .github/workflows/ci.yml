@@ -1,0 +1,48 @@
+name: ci
+
+on:
+  push:
+  pull_request:
+
+jobs:
+  check:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: bash -n
+        run: for f in bin/* lib/*.sh; do bash -n "$f"; done
+
+      - name: shellcheck
+        run: shellcheck -x bin/* lib/*.sh
+
+      # Every push to main is what herdr.dev/plugins serves, so the manifest must
+      # parse and point at files that exist.
+      - name: manifest
+        shell: python
+        run: |
+          import os, sys, tomllib
+
+          with open("herdr-plugin.toml", "rb") as f:
+              m = tomllib.load(f)
+
+          errors = [f"missing top-level `{k}`" for k in ("id", "name", "version", "min_herdr_version") if not m.get(k)]
+          panes = {p["id"] for p in m.get("panes", [])}
+          for kind in ("actions", "panes"):
+              for e in m.get(kind, []):
+                  if not str(e.get("title", "")).strip("⠀ "):
+                      errors.append(f"{kind} `{e.get('id')}`: empty title")
+                  if kind == "actions" and "." in e["id"]:
+                      errors.append(f"action `{e['id']}`: ids cannot contain dots")
+                  script = e["command"][1] if e["command"][0] in ("bash", "sh") else e["command"][0]
+                  if not os.path.isfile(script):
+                      errors.append(f"{kind} `{e['id']}`: {script} does not exist")
+
+          # bin/open-picker opens these entrypoints by name.
+          for entry in ("workspace-picker", "agent-picker"):
+              if entry not in panes:
+                  errors.append(f"pane `{entry}` is missing (used by bin/open-picker)")
+
+          for e in errors:
+              print(f"::error file=herdr-plugin.toml::{e}")
+          sys.exit(1 if errors else 0)
