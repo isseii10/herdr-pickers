@@ -33,7 +33,7 @@ fg() { # <#rrggbb or empty> <ANSI SGR code used otherwise>
 blue="$(fg "${HERDR_PICKERS_COLOR_BLUE:-}" 34)"     # workspace icon / workspace column
 green="$(fg "${HERDR_PICKERS_COLOR_GREEN:-}" 32)"   # current marker / done
 yellow="$(fg "${HERDR_PICKERS_COLOR_YELLOW:-}" 33)" # directory icon / working
-red="$(fg "${HERDR_PICKERS_COLOR_RED:-}" 31)"       # blocked
+red="$(fg "${HERDR_PICKERS_COLOR_RED:-}" 91)"       # blocked (bright red, like herdr's terminal theme)
 gray="$(fg "${HERDR_PICKERS_COLOR_GRAY:-}" 90)"     # dim text / idle (bright black)
 reset=$'\e[0m'
 

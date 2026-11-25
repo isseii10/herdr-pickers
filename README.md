@@ -83,7 +83,7 @@ cp config.env.example "$(herdr plugin config-dir isseii10.herdr-pickers)/config.
 | `HERDR_PICKERS_COLOR_BLUE` | terminal blue | workspace icon and workspace column |
 | `HERDR_PICKERS_COLOR_GREEN` | terminal green | "current" marker, done agents |
 | `HERDR_PICKERS_COLOR_YELLOW` | terminal yellow | directory icon, working agents |
-| `HERDR_PICKERS_COLOR_RED` | terminal red | blocked agents |
+| `HERDR_PICKERS_COLOR_RED` | terminal bright red | blocked agents |
 | `HERDR_PICKERS_COLOR_GRAY` | terminal bright black | dim text, idle agents |
 | `HERDR_PICKERS_WORKSPACE_WIDTH` / `_HEIGHT` | `60%` / `60%` | workspace popup size (`"80%"` or a number of cells) |
 | `HERDR_PICKERS_AGENT_WIDTH` / `_HEIGHT` | `80%` / `80%` | agent popup size |
