@@ -41,6 +41,8 @@ Search results are ranked: the best match comes first, and equal matches keep th
 - A [Nerd Font](https://www.nerdfonts.com), for the icons
 - macOS or Linux
 
+The pickers find fzf, jq and zoxide on herdr's `PATH`. When one isn't there (for example, herdr was started outside a login shell and got a minimal `PATH`), they also look in `~/.nix-profile/bin`, `/opt/homebrew/bin`, `/usr/local/bin` and `~/.local/bin`. For any other location, add `PATH="/your/dir:$PATH"` to `config.env` (see [Configuration](#configuration)).
+
 ## Install
 
 ```sh
@@ -106,7 +108,6 @@ cp config.env.example "$(herdr plugin config-dir isseii10.herdr-pickers)/config.
 
 | variable | default | |
 | --- | --- | --- |
-| `HERDR_PICKERS_PATH` | (none) | Directories to search for fzf / jq / zoxide before your `PATH`. Usually not needed: the pickers use your `PATH`, and when a command isn't on it they also look in `~/.nix-profile/bin`, `/opt/homebrew/bin`, `/usr/local/bin` and `~/.local/bin`. That covers a herdr server started outside a login shell, which gets a minimal `PATH`. |
 | `HERDR_PICKERS_WORKSPACE_WIDTH` / `_HEIGHT` | `60%` / `60%` | workspace popup size (`"80%"` or a number of cells) |
 | `HERDR_PICKERS_AGENT_WIDTH` / `_HEIGHT` | `80%` / `80%` | agent popup size |
 | `HERDR_PICKERS_AGENT_TITLE_MAX` | `50` | longer agent titles are cut with `…` |

@@ -19,10 +19,6 @@ fi
 # Nix / Homebrew / ~/.local. Common install directories are appended as a
 # fallback: the user's own PATH is still searched first.
 export PATH="$PATH:$HOME/.nix-profile/bin:/opt/homebrew/bin:/usr/local/bin:$HOME/.local/bin"
-# HERDR_PICKERS_PATH (optional): directories to search before everything else.
-if [ -n "${HERDR_PICKERS_PATH:-}" ]; then
-  export PATH="$HERDR_PICKERS_PATH:$PATH"
-fi
 
 # Colors: the terminal's own ANSI colors, so the pickers follow the terminal's
 # color scheme like everything else inside a herdr pane.
@@ -44,7 +40,7 @@ die() {
 require() { # <command>...
   local c
   for c in "$@"; do
-    command -v "$c" >/dev/null 2>&1 || die "'$c' not found in PATH. Install it or set HERDR_PICKERS_PATH in $config_file"
+    command -v "$c" >/dev/null 2>&1 || die "'$c' not found. Install it, or add its directory to PATH in $config_file"
   done
 }
 
