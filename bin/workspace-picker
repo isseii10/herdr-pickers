@@ -1,0 +1,56 @@
+#!/usr/bin/env bash
+#
+# Pick an existing workspace or a zoxide directory with fzf.
+#   - workspace selected -> focus it
+#   - directory selected -> focus the workspace with the same label (basename)
+#     if there is one; otherwise open it (as a worktree of its main repo when
+#     it is a linked git worktree, else as a new workspace)
+
+set -euo pipefail
+# shellcheck source=../lib/common.sh
+. "$(dirname "$0")/../lib/common.sh"
+
+require_fzf
+require jq zoxide
+
+ws_json="$("$herdr" workspace list)"
+
+selected="$(
+  {
+    jq -r --arg blue "$blue" --arg green "$green" --arg reset "$reset" \
+      '.result.workspaces[] | "ws\t\(.workspace_id)\t\($blue)󰙅\($reset)  \(.label)\(if .focused then "  \($green)󰄾 current\($reset)" else "" end)"' <<<"$ws_json"
+    zoxide query -l | awk -v home="$HOME" -v yellow="$yellow" -v gray="$gray" -v reset="$reset" \
+      '{ d = $0; if (index(d, home) == 1) d = "~" substr(d, length(home) + 1);
+         n = split(d, p, "/"); parent = substr(d, 1, length(d) - length(p[n]));
+         printf "dir\t%s\t%s󰱼%s  %s%s%s%s\n", $0, yellow, reset, gray, parent, reset, p[n] }'
+  } | fzf --ansi --delimiter='\t' --with-nth=3 --no-sort --reverse --prompt='workspace> ' \
+    --no-input --header='j/k: move  enter: select  /: search  q/esc: quit' \
+    "${normal_mode_binds[@]}"
+)" || exit 0
+
+kind="$(cut -f1 <<<"$selected")"
+value="$(cut -f2 <<<"$selected")"
+
+if [ "$kind" = "ws" ]; then
+  exec "$herdr" workspace focus "$value"
+fi
+
+label="$(basename "$value")"
+existing="$(jq -r --arg label "$label" '.result.workspaces[] | select(.label == $label) | .workspace_id' <<<"$ws_json" | head -n1)"
+if [ -n "$existing" ]; then
+  exec "$herdr" workspace focus "$existing"
+fi
+
+# Linked worktree (--git-dir differs from --git-common-dir): open it under the
+# main repository's workspace.
+if command -v git >/dev/null 2>&1; then
+  git_dir="$(git -C "$value" rev-parse --path-format=absolute --git-dir 2>/dev/null || true)"
+  common_dir="$(git -C "$value" rev-parse --path-format=absolute --git-common-dir 2>/dev/null || true)"
+  if [ -n "$git_dir" ] && [ "$git_dir" != "$common_dir" ]; then
+    repo_root="$(dirname "$common_dir")"
+    if "$herdr" worktree open --cwd "$repo_root" --path "$value" --label "$label" --focus >/dev/null; then
+      exit 0
+    fi
+  fi
+fi
+exec "$herdr" workspace create --cwd "$value" --label "$label" --focus
