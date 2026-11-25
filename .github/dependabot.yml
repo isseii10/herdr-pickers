@@ -1,0 +1,11 @@
+version: 2
+updates:
+  # Keeps the commit-pinned actions in .github/workflows up to date.
+  - package-ecosystem: github-actions
+    directory: /
+    schedule:
+      interval: weekly
+    # Wait a week after a release before proposing it, so a compromised
+    # release has time to be noticed and pulled.
+    cooldown:
+      default-days: 7
