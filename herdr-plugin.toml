@@ -1,6 +1,6 @@
 id = "isseii10.herdr-pickers"
 name = "herdr-pickers"
-version = "0.1.1"
+version = "0.1.2"
 min_herdr_version = "0.9.5"
 platforms = ["macos", "linux"]
 description = "fzf pickers in a popup: switch/create workspaces from zoxide dirs, and jump to a running agent with a live output preview."
@@ -21,9 +21,12 @@ title = "pickers: jump to agent"
 contexts = ["global"]
 command = ["bash", "bin/open-picker", "agent"]
 
+# Popup titles are drawn on the border as-is, and herdr trims whitespace from
+# them. U+2800 (braille blank) is not whitespace, so it survives the trim and
+# shows as a space between the border and the title.
 [[panes]]
 id = "workspace-picker"
-title = " workspace "
+title = "\u2800workspace\u2800"
 placement = "popup"
 width = "60%"
 height = "60%"
@@ -31,7 +34,7 @@ command = ["bash", "bin/workspace-picker"]
 
 [[panes]]
 id = "agent-picker"
-title = " agent "
+title = "\u2800agent\u2800"
 placement = "popup"
 width = "80%"
 height = "80%"
