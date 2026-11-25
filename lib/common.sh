@@ -14,10 +14,15 @@ if [ -f "$config_file" ]; then
   . "$config_file"
 fi
 
-# Directories prepended to PATH. herdr runs plugin commands with the server's
-# environment, which often lacks Homebrew / Nix / ~/.local paths.
-: "${HERDR_PICKERS_PATH:=$HOME/.nix-profile/bin:/opt/homebrew/bin:/usr/local/bin:$HOME/.local/bin}"
-export PATH="$HERDR_PICKERS_PATH:$PATH"
+# herdr runs plugin commands with the server's environment. A server started
+# outside a login shell (from the Dock, by launchd) has a minimal PATH without
+# Nix / Homebrew / ~/.local. Common install directories are appended as a
+# fallback: the user's own PATH is still searched first.
+export PATH="$PATH:$HOME/.nix-profile/bin:/opt/homebrew/bin:/usr/local/bin:$HOME/.local/bin"
+# HERDR_PICKERS_PATH (optional): directories to search before everything else.
+if [ -n "${HERDR_PICKERS_PATH:-}" ]; then
+  export PATH="$HERDR_PICKERS_PATH:$PATH"
+fi
 
 # Colors: the terminal's own ANSI colors, so the pickers follow the terminal's
 # color scheme like everything else inside a herdr pane.

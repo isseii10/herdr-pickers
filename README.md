@@ -106,7 +106,7 @@ cp config.env.example "$(herdr plugin config-dir isseii10.herdr-pickers)/config.
 
 | variable | default | |
 | --- | --- | --- |
-| `HERDR_PICKERS_PATH` | `$HOME/.nix-profile/bin:/opt/homebrew/bin:/usr/local/bin:$HOME/.local/bin` | Directories prepended to `PATH`. herdr runs plugins with the server's environment, which may not include the directories where fzf / jq / zoxide are installed. |
+| `HERDR_PICKERS_PATH` | (none) | Directories to search for fzf / jq / zoxide before your `PATH`. Usually not needed: the pickers use your `PATH`, and when a command isn't on it they also look in `~/.nix-profile/bin`, `/opt/homebrew/bin`, `/usr/local/bin` and `~/.local/bin`. That covers a herdr server started outside a login shell, which gets a minimal `PATH`. |
 | `HERDR_PICKERS_WORKSPACE_WIDTH` / `_HEIGHT` | `60%` / `60%` | workspace popup size (`"80%"` or a number of cells) |
 | `HERDR_PICKERS_AGENT_WIDTH` / `_HEIGHT` | `80%` / `80%` | agent popup size |
 | `HERDR_PICKERS_AGENT_TITLE_MAX` | `50` | longer agent titles are cut with `…` |

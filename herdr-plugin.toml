@@ -1,6 +1,6 @@
 id = "isseii10.herdr-pickers"
 name = "herdr-pickers"
-version = "0.5.0"
+version = "0.5.1"
 min_herdr_version = "0.9.5"
 platforms = ["macos", "linux"]
 description = "fzf pickers in a popup: switch/create workspaces from zoxide dirs, and jump to a running agent with a live output preview."
