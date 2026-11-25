@@ -19,22 +19,13 @@ fi
 : "${HERDR_PICKERS_PATH:=$HOME/.nix-profile/bin:/opt/homebrew/bin:/usr/local/bin:$HOME/.local/bin}"
 export PATH="$HERDR_PICKERS_PATH:$PATH"
 
-# Colors. By default the pickers use the terminal's own ANSI colors, so they
-# follow the terminal's color scheme. HERDR_PICKERS_COLOR_* set to #rrggbb
-# replaces one of them with that exact color.
-fg() { # <#rrggbb or empty> <ANSI SGR code used otherwise>
-  local h="${1#\#}"
-  if [[ "$h" =~ ^[0-9a-fA-F]{6}$ ]]; then
-    printf '\e[38;2;%d;%d;%dm' "0x${h:0:2}" "0x${h:2:2}" "0x${h:4:2}"
-  else
-    printf '\e[%sm' "$2"
-  fi
-}
-blue="$(fg "${HERDR_PICKERS_COLOR_BLUE:-}" 34)"     # workspace icon / workspace column
-green="$(fg "${HERDR_PICKERS_COLOR_GREEN:-}" 32)"   # current marker / done
-yellow="$(fg "${HERDR_PICKERS_COLOR_YELLOW:-}" 33)" # directory icon / working
-red="$(fg "${HERDR_PICKERS_COLOR_RED:-}" 91)"       # blocked (bright red, like herdr's terminal theme)
-gray="$(fg "${HERDR_PICKERS_COLOR_GRAY:-}" 90)"     # dim text / idle (bright black)
+# Colors: the terminal's own ANSI colors, so the pickers follow the terminal's
+# color scheme like everything else inside a herdr pane.
+blue=$'\e[34m'   # workspace icon / workspace column
+green=$'\e[32m'  # current marker / done
+yellow=$'\e[33m' # directory icon / working
+red=$'\e[91m'    # blocked (bright red, to stand out)
+gray=$'\e[90m'   # dim text / idle (bright black)
 reset=$'\e[0m'
 
 # --- dependency checks --------------------------------------------------------

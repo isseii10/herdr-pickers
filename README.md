@@ -80,17 +80,14 @@ cp config.env.example "$(herdr plugin config-dir isseii10.herdr-pickers)/config.
 | variable | default | |
 | --- | --- | --- |
 | `HERDR_PICKERS_PATH` | `$HOME/.nix-profile/bin:/opt/homebrew/bin:/usr/local/bin:$HOME/.local/bin` | Directories prepended to `PATH`. herdr runs plugins with the server's environment, which may not include the directories where fzf / jq / zoxide are installed. |
-| `HERDR_PICKERS_COLOR_BLUE` | terminal blue | workspace icon and workspace column |
-| `HERDR_PICKERS_COLOR_GREEN` | terminal green | "current" marker, done agents |
-| `HERDR_PICKERS_COLOR_YELLOW` | terminal yellow | directory icon, working agents |
-| `HERDR_PICKERS_COLOR_RED` | terminal bright red | blocked agents |
-| `HERDR_PICKERS_COLOR_GRAY` | terminal bright black | dim text, idle agents |
 | `HERDR_PICKERS_WORKSPACE_WIDTH` / `_HEIGHT` | `60%` / `60%` | workspace popup size (`"80%"` or a number of cells) |
 | `HERDR_PICKERS_AGENT_WIDTH` / `_HEIGHT` | `80%` / `80%` | agent popup size |
 | `HERDR_PICKERS_AGENT_TITLE_MAX` | `50` | longer agent titles are cut with `…` |
 | `HERDR_PICKERS_AGENT_PREVIEW_LINES` | `200` | lines of agent output in the preview |
 
-By default the pickers use the terminal's own ANSI colors, so they follow your terminal's color scheme (this matches herdr when its theme is `terminal`). Set a color variable to `#rrggbb` to use that exact color instead. `config.env.example` lists herdr's `one-dark` colors as an example. A value set in `config.env` overrides the same variable from the environment.
+A value set in `config.env` overrides the same variable from the environment.
+
+The pickers use the terminal's own ANSI colors, so they follow your terminal's color scheme, like the other programs in your herdr panes. To change them, change the terminal's theme.
 
 ## License
 
