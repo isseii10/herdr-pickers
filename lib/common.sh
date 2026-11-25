@@ -19,25 +19,22 @@ fi
 : "${HERDR_PICKERS_PATH:=$HOME/.nix-profile/bin:/opt/homebrew/bin:/usr/local/bin:$HOME/.local/bin}"
 export PATH="$HERDR_PICKERS_PATH:$PATH"
 
-# Colors as #rrggbb (defaults: herdr's one-dark theme).
-: "${HERDR_PICKERS_COLOR_BLUE:=#61afef}"   # workspace icon / workspace column
-: "${HERDR_PICKERS_COLOR_GREEN:=#98c379}"  # current marker / done
-: "${HERDR_PICKERS_COLOR_YELLOW:=#e5c07b}" # directory icon / working
-: "${HERDR_PICKERS_COLOR_RED:=#e06c75}"    # blocked
-: "${HERDR_PICKERS_COLOR_GRAY:=#5c6370}"   # dim text / idle
-
-hex_to_ansi() { # #rrggbb -> 24-bit SGR foreground escape
+# Colors. By default the pickers use the terminal's own ANSI colors, so they
+# follow the terminal's color scheme. HERDR_PICKERS_COLOR_* set to #rrggbb
+# replaces one of them with that exact color.
+fg() { # <#rrggbb or empty> <ANSI SGR code used otherwise>
   local h="${1#\#}"
-  if [[ ! "$h" =~ ^[0-9a-fA-F]{6}$ ]]; then
-    return 0 # invalid -> no color
+  if [[ "$h" =~ ^[0-9a-fA-F]{6}$ ]]; then
+    printf '\e[38;2;%d;%d;%dm' "0x${h:0:2}" "0x${h:2:2}" "0x${h:4:2}"
+  else
+    printf '\e[%sm' "$2"
   fi
-  printf '\e[38;2;%d;%d;%dm' "0x${h:0:2}" "0x${h:2:2}" "0x${h:4:2}"
 }
-blue="$(hex_to_ansi "$HERDR_PICKERS_COLOR_BLUE")"
-green="$(hex_to_ansi "$HERDR_PICKERS_COLOR_GREEN")"
-yellow="$(hex_to_ansi "$HERDR_PICKERS_COLOR_YELLOW")"
-red="$(hex_to_ansi "$HERDR_PICKERS_COLOR_RED")"
-gray="$(hex_to_ansi "$HERDR_PICKERS_COLOR_GRAY")"
+blue="$(fg "${HERDR_PICKERS_COLOR_BLUE:-}" 34)"     # workspace icon / workspace column
+green="$(fg "${HERDR_PICKERS_COLOR_GREEN:-}" 32)"   # current marker / done
+yellow="$(fg "${HERDR_PICKERS_COLOR_YELLOW:-}" 33)" # directory icon / working
+red="$(fg "${HERDR_PICKERS_COLOR_RED:-}" 31)"       # blocked
+gray="$(fg "${HERDR_PICKERS_COLOR_GRAY:-}" 90)"     # dim text / idle (bright black)
 reset=$'\e[0m'
 
 # --- dependency checks --------------------------------------------------------
