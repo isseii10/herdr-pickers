@@ -53,6 +53,22 @@ To try a local checkout instead:
 herdr plugin link /path/to/herdr-pickers
 ```
 
+## Uninstall
+
+1. Remove the two `[[keys.command]]` entries ([Key bindings](#key-bindings)) from your herdr `config.toml`, then reload the config (`herdr server reload-config`).
+2. Uninstall the plugin:
+
+   ```sh
+   herdr plugin uninstall isseii10.herdr-pickers
+   ```
+
+   If you linked a local checkout, run `herdr plugin unlink isseii10.herdr-pickers` instead.
+3. herdr keeps the plugin's config directory. If you created a `config.env`, delete it yourself:
+
+   ```sh
+   rm -r "$(herdr plugin config-dir isseii10.herdr-pickers)"
+   ```
+
 ## Key bindings
 
 The plugin does not bind any keys itself. Add these to your herdr `config.toml`, then reload the config (`herdr server reload-config`):
@@ -99,22 +115,6 @@ cp config.env.example "$(herdr plugin config-dir isseii10.herdr-pickers)/config.
 A value set in `config.env` overrides the same variable from the environment.
 
 The pickers use the terminal's own ANSI colors, so they follow your terminal's color scheme, like the other programs in your herdr panes. To change them, change the terminal's theme.
-
-## Uninstall
-
-1. Remove the two `[[keys.command]]` entries from your herdr `config.toml`, then reload the config (`herdr server reload-config`).
-2. Uninstall the plugin:
-
-   ```sh
-   herdr plugin uninstall isseii10.herdr-pickers
-   ```
-
-   If you linked a local checkout, run `herdr plugin unlink isseii10.herdr-pickers` instead.
-3. herdr keeps the plugin's config directory. If you created a `config.env`, delete it yourself:
-
-   ```sh
-   rm -r "$(herdr plugin config-dir isseii10.herdr-pickers)"
-   ```
 
 ## License
 
