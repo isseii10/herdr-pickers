@@ -15,14 +15,21 @@ require jq
 
 agents_json="$("$herdr" agent list)"
 ws_json="$("$herdr" workspace list)"
+recency="$(recency_json)"
 
 # Column 1: pane_id (hidden, used to focus)
 # Shown: status icon  title  workspace  session name
 # Title and workspace are padded by display width (wide chars count as 2);
 # titles longer than title_max are cut with "…".
+# Order (also the tie-break order while searching):
+#   1. blocked (waiting for you), then done (finished, not seen yet); newest
+#      state change first
+#   2. the rest, most recently focused first (hooks/record-focus), then newest
+#      state change
+#   3. the current agent last
 selected="$(
   jq -r \
-    --argjson ws "$ws_json" --argjson title_max "$HERDR_PICKERS_AGENT_TITLE_MAX" \
+    --argjson ws "$ws_json" --argjson recency "$recency" --argjson title_max "$HERDR_PICKERS_AGENT_TITLE_MAX" \
     --arg blue "$blue" --arg green "$green" --arg yellow "$yellow" --arg red "$red" \
     --arg gray "$gray" --arg reset "$reset" '
     def cw: if (. >= 4352 and . <= 4447) or (. >= 11904 and . <= 42191) or (. >= 44032 and . <= 55203)
@@ -43,14 +50,21 @@ selected="$(
               ws: ($labels[.workspace_id] // .workspace_id)}] as $agents
     | ($agents | map(.title | width) | max) as $tw
     | ($agents | map(.ws | width) | max) as $ww
-    | $agents[]
+    | $agents
+    | sort_by(
+        .focused,
+        (if .agent_status == "blocked" then 0 elif .agent_status == "done" then 1 else 2 end) as $rank
+        | $rank,
+        (if $rank < 2 then 0 else -($recency.pane[.pane_id] // 0) end),
+        -(.state_change_seq // 0)
+      )[]
     | (if .agent_status == "working" then "\($yellow)◑"
        elif .agent_status == "blocked" then "\($red)●"
        elif .agent_status == "done" then "\($green)✔"
        else "\($gray)○" end) as $icon
     | "\(.pane_id)\t\($icon)\($reset)  \(.title | pad($tw))  \($blue)\(.ws | pad($ww))\($reset)  \($gray)\(.name // "")\($reset)\(if .focused then "  \($green)󰄾 current\($reset)" else "" end)"
   ' <<<"$agents_json" |
-    fzf --ansi --delimiter='\t' --with-nth=2 --no-sort --reverse --prompt='agent> ' \
+    fzf --ansi --delimiter='\t' --with-nth=2 --tiebreak=index --reverse --prompt='agent> ' \
       --no-input --header='j/k: move  enter: focus  /: search  q/esc: quit' \
       --preview="$(printf '%q' "$herdr") agent read {1} --lines $HERDR_PICKERS_AGENT_PREVIEW_LINES --ansi" \
       --preview-window='down,60%,follow' \

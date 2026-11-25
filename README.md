@@ -7,6 +7,21 @@ Two fzf pickers for [herdr](https://herdr.dev), opened as popups:
   - Pick a directory to focus the workspace with the same name (the directory's basename). If there is none, the picker creates one. A linked git worktree opens under its main repository's workspace (`herdr worktree open`).
 - **agent picker**: lists the running agents with their status, title, workspace and session name. A live preview of the selected agent's recent output is shown below the list. Press enter to focus that agent.
 
+### Order
+
+The entry you most likely want comes first. The current workspace or agent always goes last, so the previous one is on top.
+
+- **workspace picker**:
+  1. Open workspaces, most recently focused first.
+  2. zoxide directories, in zoxide's frecency order. Directories already open as a workspace are left out. Picking a directory adds it to zoxide, so the directories you open often move up.
+- **agent picker**:
+  1. Blocked agents (waiting for you), then done agents (finished, not seen yet). Within each group, the latest status change comes first.
+  2. The other agents, most recently focused first.
+
+While you search, the best matches come first. Among equally good matches, the order above wins.
+
+"Recently focused" includes switches made outside the pickers. The plugin records every pane focus with a `pane.focused` event hook, in `focus.log` in the plugin state directory (`~/.local/state/herdr/plugins/isseii10.herdr-pickers/`). The log is trimmed automatically.
+
 Both pickers start in a vim-like "normal mode":
 
 | key | action |
