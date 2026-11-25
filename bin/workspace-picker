@@ -15,15 +15,20 @@ require jq zoxide
 
 ws_json="$("$herdr" workspace list)"
 
+# Columns: kind, id/path (hidden), icon + name (searched), "current" marker.
+# Search: best match first. The path scheme favours matches right after a "/"
+# and in the last path component; equal matches keep the order above.
+# --tabstop=1 makes the tab before the marker one column wide.
 selected="$(
   {
     jq -r --arg blue "$blue" --arg green "$green" --arg reset "$reset" \
-      '.result.workspaces[] | "ws\t\(.workspace_id)\t\($blue)󰙅\($reset)  \(.label)\(if .focused then "  \($green)󰄾 current\($reset)" else "" end)"' <<<"$ws_json"
+      '.result.workspaces[] | "ws\t\(.workspace_id)\t\($blue)󰙅\($reset)  \(.label)\t\(if .focused then " \($green)󰄾 current\($reset)" else "" end)"' <<<"$ws_json"
     zoxide query -l | awk -v home="$HOME" -v yellow="$yellow" -v gray="$gray" -v reset="$reset" \
       '{ d = $0; if (index(d, home) == 1) d = "~" substr(d, length(home) + 1);
          n = split(d, p, "/"); parent = substr(d, 1, length(d) - length(p[n]));
          printf "dir\t%s\t%s󰱼%s  %s%s%s%s\n", $0, yellow, reset, gray, parent, reset, p[n] }'
-  } | fzf --ansi --delimiter='\t' --with-nth=3 --no-sort --reverse --prompt='workspace> ' \
+  } | fzf --ansi --delimiter='\t' --with-nth=3,4 --nth=1 --tabstop=1 \
+    --scheme=path --tiebreak=pathname,index --reverse --prompt='workspace> ' \
     --no-input --header='j/k: move  enter: select  /: search  q/esc: quit' \
     "${normal_mode_binds[@]}"
 )" || exit 0

@@ -16,8 +16,10 @@ require jq
 agents_json="$("$herdr" agent list)"
 ws_json="$("$herdr" workspace list)"
 
-# Column 1: pane_id (hidden, used to focus)
-# Shown: status icon  title  workspace  session name
+# Columns: pane_id (hidden, used to focus), "icon  title  workspace  session
+# name" (searched), "current" marker. --tabstop=1 makes the tab before the
+# marker one column wide.
+# Search: best match first; equal matches keep herdr's order.
 # Title and workspace are padded by display width (wide chars count as 2);
 # titles longer than title_max are cut with "…".
 selected="$(
@@ -48,9 +50,9 @@ selected="$(
        elif .agent_status == "blocked" then "\($red)●"
        elif .agent_status == "done" then "\($green)✔"
        else "\($gray)○" end) as $icon
-    | "\(.pane_id)\t\($icon)\($reset)  \(.title | pad($tw))  \($blue)\(.ws | pad($ww))\($reset)  \($gray)\(.name // "")\($reset)\(if .focused then "  \($green)󰄾 current\($reset)" else "" end)"
+    | "\(.pane_id)\t\($icon)\($reset)  \(.title | pad($tw))  \($blue)\(.ws | pad($ww))\($reset)  \($gray)\(.name // "")\($reset)\t\(if .focused then " \($green)󰄾 current\($reset)" else "" end)"
   ' <<<"$agents_json" |
-    fzf --ansi --delimiter='\t' --with-nth=2 --no-sort --reverse --prompt='agent> ' \
+    fzf --ansi --delimiter='\t' --with-nth=2,3 --nth=1 --tabstop=1 --tiebreak=index --reverse --prompt='agent> ' \
       --no-input --header='j/k: move  enter: focus  /: search  q/esc: quit' \
       --preview="$(printf '%q' "$herdr") agent read {1} --lines $HERDR_PICKERS_AGENT_PREVIEW_LINES --ansi" \
       --preview-window='down,60%,follow' \

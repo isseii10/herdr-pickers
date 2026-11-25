@@ -18,6 +18,8 @@ Both pickers start in a vim-like "normal mode":
 | `enter` | select |
 | `q` | quit |
 
+Search results are ranked: the best match comes first, and equal matches keep the list order. The workspace picker scores entries as paths, so it prefers matches right after a `/` and in the directory's own name (`mwa` finds `my-web-app`, `api` finds `~/src/api` before `~/src/api/internal`). Icons and the "current" marker are not searched.
+
 ## Requirements
 
 - herdr **0.9.5** or later

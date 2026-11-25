@@ -8,6 +8,8 @@ A herdr plugin (`isseii10.herdr-pickers`): bash + fzf + jq. Published on GitHub 
 - Popup panes get no `HERDR_PANE_ID`. Read `HERDR_PLUGIN_CONTEXT_JSON` instead. Plugin commands run with the plugin root as cwd and the herdr server's environment. That PATH often lacks Homebrew/Nix, which is why `lib/common.sh` prepends `HERDR_PICKERS_PATH`.
 - User settings are `KEY=value` lines in `$HERDR_PLUGIN_CONFIG_DIR/config.env`, sourced by `lib/common.sh` (pickers) and `bin/open-picker` (popup size). A new setting needs a default in the script, plus an entry in both `config.env.example` and the README table.
 - A popup closes when its command exits, so a fatal error goes through `die` (it waits for a key press).
+- fzf input lines are tab-separated: hidden ids first, then the searched text, then the "current" marker in its own column. `--nth` counts columns after `--with-nth` is applied, and hidden columns can't be searched. So `--nth=1` searches only the text, and `--tabstop=1` renders the tab before the marker as a single column. fzf placeholders such as `{1}` and the printed selection still use the original columns.
+- Search ranks results (no `--no-sort`) with `--tiebreak=...,index`, so an empty query shows the input order unchanged. To compare search options, build queries from the list itself (prefixes, `a-b-c` initials, last `-` part of each name) and count how often the intended entry ranks first. `--scheme=path --tiebreak=pathname,index` won for workspaces (93% top-1, against 44% with `--no-sort`).
 - Keep fzf ≥ 0.59.0 working (`--no-input`, `show-input`/`hide-input`, `$FZF_INPUT_STATE`). If a change needs a newer fzf, raise `fzf_min` and the README together.
 
 ## Testing
