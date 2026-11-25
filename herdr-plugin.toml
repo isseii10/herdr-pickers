@@ -23,7 +23,8 @@ command = ["bash", "bin/open-picker", "agent"]
 
 # Popup titles are drawn on the border as-is, and herdr trims whitespace from
 # them. U+2800 (braille blank) is not whitespace, so it survives the trim and
-# shows as a space between the border and the title.
+# shows as a space between the border and the title. Drop it if herdr pads
+# popup titles itself: https://github.com/herdrdev/herdr/discussions/6195
 [[panes]]
 id = "workspace-picker"
 title = "\u2800workspace\u2800"
