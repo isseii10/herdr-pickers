@@ -1,6 +1,16 @@
 # herdr-pickers
 
-Two fzf pickers for [herdr](https://herdr.dev), opened as popups:
+Two small fzf pickers for [herdr](https://herdr.dev): jump to a workspace (or open one from your zoxide directories), and jump to a running agent with a live preview of its output.
+
+- **Nothing to build.** About 200 lines of bash on top of fzf, jq and zoxide. No Go, Rust or Node toolchain, no build step: `herdr plugin install` and it works.
+- **Easy to change.** The whole plugin is a few short scripts. Read them in a few minutes and adapt them to your setup.
+- **fzf as you know it.** Matching and ranking are fzf's own, tuned so that the entry you mean comes first.
+- **Wide characters line up.** Agent titles in Japanese, Chinese or Korean keep the columns aligned, because widths are counted in display cells.
+- **Your colors.** The pickers use the terminal's ANSI colors, so they match the other programs in your herdr panes without any setting.
+
+## The pickers
+
+Both open as herdr popups:
 
 - **workspace picker**: lists the existing workspaces and your [zoxide](https://github.com/ajeetdsouza/zoxide) directories.
   - Pick a workspace to focus it.
