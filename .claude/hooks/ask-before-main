@@ -9,9 +9,9 @@
 
 input="$(cat)"
 cwd="$(jq -r '.cwd // empty' <<<"$input")"
-# Drop quoted text first, so words in a commit message or an echo don't count.
-cmd="$(jq -r '.tool_input.command // empty' <<<"$input" |
-  sed -E "s/'[^']*'//g; s/\"([^\"\\\\]|\\\\.)*\"//g")"
+# Drop quoted text first (across lines), so words in a commit message or an
+# echo don't count.
+cmd="$(jq -r '.tool_input.command // "" | gsub("'"'"'[^'"'"']*'"'"'"; "") | gsub("\"([^\"\\\\]|\\\\.)*\""; "")' <<<"$input")"
 
 ask() {
   jq -n --arg reason "$1" '{hookSpecificOutput: {hookEventName: "PreToolUse",
