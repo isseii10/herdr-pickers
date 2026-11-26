@@ -16,7 +16,16 @@ Both open as herdr popups:
 - **workspace picker**: lists the existing workspaces and your [zoxide](https://github.com/ajeetdsouza/zoxide) directories.
   - Pick a workspace to focus it.
   - Pick a directory to focus the workspace with the same name (the directory's basename). If there is none, the picker creates one. A linked git worktree opens under its main repository's workspace (`herdr worktree open`).
+
+  ![workspace picker: open workspaces, then zoxide directories](docs/images/workspace-picker.png)
+
+  While you search, open workspaces stay above directories:
+
+  ![workspace picker searching for "api"](docs/images/workspace-search.png)
+
 - **agent picker**: lists the running agents with their status, title, workspace and session name. A live preview of the selected agent's recent output is shown below the list. Press enter to focus that agent.
+
+  ![agent picker with the selected agent's output in the preview](docs/images/agent-picker.png)
 
 Both pickers start in a vim-like "normal mode":
 

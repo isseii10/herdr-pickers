@@ -1,0 +1,46 @@
+#!/usr/bin/env bash
+#
+# Regenerate the README screenshots (docs/images/*.png) without touching your
+# own herdr session: VHS runs a throwaway session ("herdr-pickers-demo") in
+# demo mode, with a plain shell, and this script cleans everything up after.
+#
+# Needs vhs (for example: nix run nixpkgs#vhs) and this checkout linked as the
+# installed plugin (herdr plugin link .). Run from anywhere.
+
+set -euo pipefail
+cd "$(dirname "$0")/.."
+
+vhs=(vhs)
+command -v vhs >/dev/null 2>&1 || vhs=(nix run nixpkgs#vhs --)
+
+cfg_dir="$(herdr plugin config-dir isseii10.herdr-pickers)"
+backup=""
+drop_session() { # stop and delete the throwaway session, so each run starts fresh
+  herdr session stop herdr-pickers-demo >/dev/null 2>&1 || true
+  herdr session delete herdr-pickers-demo >/dev/null 2>&1 || true
+}
+cleanup() {
+  drop_session
+  rm -f "$cfg_dir/config.env" demo/.screenshots.gif
+  if [ -n "${DEMO_DIR:-}" ]; then rm -rf "$DEMO_DIR"; fi
+  if [ -n "$backup" ]; then mv "$backup" "$cfg_dir/config.env"; fi
+}
+trap cleanup EXIT
+drop_session
+
+if [ -e "$cfg_dir/config.env" ]; then
+  backup="$(mktemp "$cfg_dir/config.env.XXXXXX")"
+  mv "$cfg_dir/config.env" "$backup"
+fi
+cp demo/config.env "$cfg_dir/config.env"
+
+mkdir -p docs/images
+# The session starts in a scratch directory (no git branch in the sidebar).
+DEMO_ROOT="$PWD"
+DEMO_DIR="$(mktemp -d "${TMPDIR:-/tmp}/herdr-pickers-demo.XXXXXX")"
+mkdir -p "$DEMO_DIR/my-web-app"
+export DEMO_ROOT DEMO_DIR
+# Drop the variables that tie this shell to the herdr session it runs in, so the
+# session inside VHS is a separate one.
+while read -r var; do unset "$var"; done < <(compgen -e | grep '^HERDR_' || true)
+SHELL="$PWD/demo/shell" "${vhs[@]}" demo/screenshots.tape

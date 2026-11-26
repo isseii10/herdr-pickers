@@ -1,0 +1,10 @@
+#!/usr/bin/env bash
+#
+# Shell for the panes of the screenshot session: no rc files and a bare "$ "
+# prompt, so nothing from your own shell setup (user name, paths) shows up.
+# With arguments (fzf runs its preview as `$SHELL -c ...`) it is plain bash.
+
+if [ $# -gt 0 ]; then
+  exec /bin/bash "$@"
+fi
+PS1='$ ' exec /bin/bash --noprofile --norc -i

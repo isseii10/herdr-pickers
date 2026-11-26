@@ -1,0 +1,15 @@
+#!/usr/bin/env bash
+#
+# Run inside the screenshot session: name its workspaces like the made-up ones
+# in demo/herdr, so herdr's sidebar matches what the pickers show.
+
+set -euo pipefail
+
+first="$(herdr workspace list | jq -r '.result.workspaces[0].workspace_id')"
+herdr workspace rename "$first" my-web-app >/dev/null
+
+dir="${DEMO_DIR:?run through demo/screenshots}"
+for label in api-server dotfiles notes infra; do
+  mkdir -p "$dir/$label"
+  herdr workspace create --cwd "$dir/$label" --label "$label" --no-focus >/dev/null
+done
