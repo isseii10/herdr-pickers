@@ -1,0 +1,29 @@
+#!/usr/bin/env bash
+#
+# rank-groups <query> <file>... [-- <fzf matching options>...]
+#
+# Print the lines of each file that match <query>, best match first within each
+# file, file after file. Used as an fzf reload command so that one group (open
+# workspaces) always stays above the next (zoxide directories) while searching,
+# which fzf's own sort can't do: it ranks all lines together.
+# An empty query prints the files unchanged.
+
+set -uo pipefail
+
+query="$1"
+shift
+files=()
+while [ $# -gt 0 ] && [ "$1" != "--" ]; do
+  files+=("$1")
+  shift
+done
+[ "${1:-}" = "--" ] && shift
+
+for f in "${files[@]}"; do
+  if [ -z "$query" ]; then
+    cat "$f"
+  else
+    fzf "$@" --filter "$query" <"$f" # exits 1 when nothing matches
+  fi
+done
+exit 0
