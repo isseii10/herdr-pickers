@@ -3,6 +3,12 @@
 # Fake herdr CLI for screenshots: answers the calls the pickers make with
 # made-up workspaces and agents. Commands that would change something
 # (focus, create, open) do nothing, so picking an entry is harmless.
+# `plugin ...` goes to the real herdr: bin/open-picker reads config.env too and
+# opens the popup with it.
+
+if [ "${1:-}" = plugin ]; then
+  exec "${HERDR_BIN_PATH:-herdr}" "$@"
+fi
 
 case "$1 ${2:-}" in
 "workspace list")
