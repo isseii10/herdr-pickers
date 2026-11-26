@@ -10,14 +10,14 @@ The screenshots come from **demo mode**, never from the user's real herdr sessio
 ## Steps
 
 1. **Link this checkout.** `herdr plugin list` must show `isseii10.herdr-pickers` as `local:<this repo>`. If it is installed from GitHub, run `herdr plugin uninstall isseii10.herdr-pickers && herdr plugin link .`, and tell the user, since their installed version changes.
-2. **Update the demo if the UI changed.** If the pickers now show something the tape doesn't reach, or the made-up data no longer fits (new columns, new states), edit `demo/herdr` and `demo/screenshots.tape` first.
-3. **Run** `demo/screenshots`. Done when it exits 0 and `docs/images/` has `workspace-picker.png`, `workspace-search.png` and `agent-picker.png`.
+2. **Fit the demo to the current UI.** Done when the tape can still reach the three states that step 4 checks, and `demo/herdr`'s made-up data covers everything the pickers now show (new columns, new states). Edit `demo/herdr` and `demo/screenshots.tape` until it does.
+3. **Run** `demo/screenshots`, after noting what `$(herdr plugin config-dir isseii10.herdr-pickers)` holds. Done when it exits 0 and `docs/images/` has `workspace-picker.png`, `workspace-search.png` and `agent-picker.png`.
 4. **Look at every image** with the Read tool. Each one must pass all of these checks:
    - **No real data:** only the made-up names (`my-web-app`, `api-server`, `~/src/...`). The user's workspaces, directories, user name, home path and git branches must not appear, including behind the popup and in the sidebar.
    - **Rendering:** icons are drawn (not □), and Japanese titles keep the columns aligned.
    - **State:** shot 1 is the workspace picker as it opens. Shot 2 shows the query `api` with the search-mode header. Shot 3 has the second agent row selected, with its output in the preview.
-5. **Scan the files:** `strings docs/images/*.png | grep -i -E '<user name>|/Users/'` finds nothing.
-6. **Check the cleanup:** `herdr session list` has no `herdr-pickers-demo`, and the plugin config dir holds only what it held before.
+5. **Scan the files:** `LC_ALL=C strings docs/images/*.png | LC_ALL=C grep -i -e "$USER" -e "$HOME" -e /Users/` prints nothing.
+6. **Check the cleanup:** `herdr session list` has no `herdr-pickers-demo`, and the plugin config dir holds exactly what step 3 noted.
 7. Commit the images on the work branch.
 
 ## When a shot is wrong
