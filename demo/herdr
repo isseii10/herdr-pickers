@@ -1,0 +1,70 @@
+#!/usr/bin/env bash
+#
+# Fake herdr CLI for screenshots: answers the calls the pickers make with
+# made-up workspaces and agents. Commands that would change something
+# (focus, create, open) do nothing, so picking an entry is harmless.
+
+case "$1 ${2:-}" in
+"workspace list")
+  cat <<'EOF'
+{"result":{"workspaces":[
+{"workspace_id":"w1","number":1,"label":"my-web-app","focused":true},
+{"workspace_id":"w2","number":2,"label":"api-server","focused":false},
+{"workspace_id":"w3","number":3,"label":"dotfiles","focused":false},
+{"workspace_id":"w4","number":4,"label":"notes","focused":false},
+{"workspace_id":"w5","number":5,"label":"infra","focused":false}]}}
+EOF
+  ;;
+"agent list")
+  cat <<'EOF'
+{"result":{"agents":[
+{"pane_id":"w1:p1","agent":"claude","agent_status":"working","focused":true,"workspace_id":"w1","name":"login-form","terminal_title_stripped":"ログイン画面のバリデーションを追加"},
+{"pane_id":"w2:p1","agent":"claude","agent_status":"blocked","focused":false,"workspace_id":"w2","name":"pagination","terminal_title_stripped":"Add cursor pagination to /users"},
+{"pane_id":"w2:p2","agent":"codex","agent_status":"done","focused":false,"workspace_id":"w2","name":"flaky-test","terminal_title_stripped":"CI の flaky なテストを直す"},
+{"pane_id":"w5:p1","agent":"claude","agent_status":"idle","focused":false,"workspace_id":"w5","name":"","terminal_title_stripped":"Review the Terraform plan"},
+{"pane_id":"w3:p1","agent":"claude","agent_status":"done","focused":false,"workspace_id":"w3","name":"nvim","terminal_title_stripped":"Update the Neovim LSP config"}]}}
+EOF
+  ;;
+"agent read")
+  dim=$'\e[90m' bold=$'\e[1m' green=$'\e[32m' red=$'\e[31m' yellow=$'\e[33m' cyan=$'\e[36m' reset=$'\e[0m'
+  case "${3:-}" in
+  w2:p1)
+    cat <<EOF
+${bold}> Add cursor-based pagination to GET /users${reset}
+
+${dim}●${reset} Read ${cyan}internal/handler/users.go${reset} (142 lines)
+${dim}●${reset} Read ${cyan}internal/store/users.go${reset} (88 lines)
+${dim}●${reset} Update ${cyan}internal/store/users.go${reset}
+    ${green}+ func (s *Store) ListUsers(ctx context.Context, after string, limit int) ([]User, string, error) {${reset}
+    ${red}- func (s *Store) ListUsers(ctx context.Context) ([]User, error) {${reset}
+
+${yellow}Do you want to run this command?${reset}
+  go test ./internal/...
+
+  ${bold}❯ 1. Yes${reset}
+    2. Yes, and don't ask again for go test
+    3. No, and tell Claude what to do differently
+EOF
+    ;;
+  w1:p1)
+    cat <<EOF
+${bold}> ログイン画面のバリデーションを追加して${reset}
+
+${dim}●${reset} Read ${cyan}src/pages/login.tsx${reset} (64 lines)
+${dim}●${reset} Update ${cyan}src/pages/login.tsx${reset}
+    ${green}+ const schema = z.object({ email: z.string().email(), password: z.string().min(8) })${reset}
+${dim}●${reset} Running ${cyan}npm test -- login${reset} …
+EOF
+    ;;
+  *)
+    cat <<EOF
+${bold}> Finished${reset}
+
+${dim}●${reset} All checks passed.
+${green}✔${reset} Done. Summary of the changes is above.
+EOF
+    ;;
+  esac
+  ;;
+*) exit 0 ;; # focus / create / worktree open: do nothing
+esac

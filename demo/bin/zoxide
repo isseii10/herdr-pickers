@@ -1,0 +1,12 @@
+#!/usr/bin/env bash
+#
+# Fake zoxide for screenshots: `query -l` lists made-up directories, anything
+# else (such as `add`) does nothing.
+
+if [ "${1:-}" = query ]; then
+  for d in src/my-web-app src/api-server src/api-server/internal dotfiles notes \
+    src/infra src/infra/terraform src/design-system src/mobile-app Downloads; do
+    printf '%s/%s\n' "$HOME" "$d"
+  done
+fi
+exit 0
