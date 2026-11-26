@@ -117,8 +117,8 @@ cp config.env.example "$(herdr plugin config-dir isseii10.herdr-pickers)/config.
 
 | variable | default | |
 | --- | --- | --- |
-| `HERDR_PICKERS_WORKSPACE_WIDTH` / `_HEIGHT` | `60%` / `60%` | workspace popup size (`"80%"` or a number of cells) |
-| `HERDR_PICKERS_AGENT_WIDTH` / `_HEIGHT` | `80%` / `80%` | agent popup size |
+| `HERDR_PICKERS_WORKSPACE_WIDTH` / `_HEIGHT` | `70%` / `70%` | workspace popup size (`"80%"` or a number of cells) |
+| `HERDR_PICKERS_AGENT_WIDTH` / `_HEIGHT` | `70%` / `70%` | agent popup size |
 | `HERDR_PICKERS_AGENT_TITLE_MAX` | `50` | longer agent titles are cut with `…` |
 | `HERDR_PICKERS_AGENT_PREVIEW_LINES` | `200` | lines of agent output in the preview |
 
