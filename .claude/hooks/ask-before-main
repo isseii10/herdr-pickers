@@ -23,13 +23,22 @@ if [[ "$cmd" =~ (^|[^[:alnum:]_-])gh[[:space:]]+pr[[:space:]]+merge ]]; then
   ask "Merging a pull request into main publishes a release. Merge only when the user said so."
 fi
 
-if [[ "$cmd" =~ (^|[^[:alnum:]_-])git[[:space:]]+([^;&|]*[[:space:]])?push([[:space:]]|$) ]]; then
-  if [[ "$cmd" =~ (^|[[:space:]:/])main([[:space:]]|$) ]]; then
-    ask "This pushes to main, which publishes a release. Push only when the user said to merge."
+# Check each `git ... push` in the command on its own.
+branch="$(git -C "${cwd:-.}" symbolic-ref --quiet --short HEAD 2>/dev/null)"
+while IFS= read -r part; do
+  [[ "$part" =~ (^|[[:space:]])git([[:space:]]+[^[:space:]]+)*[[:space:]]+push([[:space:]]+(.*))?$ ]] || continue
+  read -ra words <<<"${BASH_REMATCH[4]}"
+  positional=0
+  for w in "${words[@]}"; do
+    case "$w" in -* | *'>'* | *'<'*) continue ;; esac # options and redirections
+    positional=$((positional + 1))
+    case "$w" in main | *:main | refs/heads/main | *:refs/heads/main)
+      ask "This pushes to main, which publishes a release. Push only when the user said to merge." ;;
+    esac
+  done
+  # Only a remote (or nothing) given: git pushes the current branch.
+  if [ "$positional" -le 1 ] && [ "$branch" = main ]; then
+    ask "main is checked out and this push names no branch, so it may update main and publish a release. Push only when the user said to merge."
   fi
-  branch="$(git -C "${cwd:-.}" symbolic-ref --quiet --short HEAD 2>/dev/null)"
-  if [ "$branch" = main ]; then
-    ask "main is checked out, so this push may update main and publish a release. Push only when the user said to merge."
-  fi
-fi
+done < <(tr ';&|' '\n' <<<"$cmd")
 exit 0
