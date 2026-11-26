@@ -40,7 +40,7 @@ reload="$(printf '%q ' bash "$(dirname "$0")/../lib/rank-groups")"
 reload+="{q} $(printf '%q ' "$tmp/workspaces" "$tmp/dirs" -- "${match[@]}" "${rank[@]}")"
 selected="$(
   cat "$tmp/workspaces" "$tmp/dirs" |
-    fzf "${match[@]}" --no-sort --tabstop=1 --reverse --prompt='workspace> ' \
+    fzf "${match[@]}" --no-sort --tabstop=1 --reverse --prompt='> ' \
       --with-shell='bash -c' --bind="change:reload-sync:$reload" \
       --no-input --header="$normal_header" \
       "${normal_mode_binds[@]}"

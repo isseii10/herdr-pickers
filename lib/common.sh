@@ -57,14 +57,13 @@ require_fzf() {
 # --- fzf "normal mode" --------------------------------------------------------
 # Start with the input hidden and move with j/k; `/` shows the input for fuzzy
 # search (j/k/q are then typed as text), esc hides it again (or quits). The
-# header shows the keys of the current mode: while searching, fzf's own
-# ctrl-j/ctrl-k move instead of j/k.
+# header shows the keys of the current mode (j/k are text while searching).
 normal_key() { # <key> <action in normal mode>
   printf -- "--bind=%s:transform:[ \"\$FZF_INPUT_STATE\" = enabled ] && echo 'put(%s)' || echo '%s'" "$1" "$1" "$2"
 }
 mode_binds() { # <what enter does>; sets normal_header and normal_mode_binds
   normal_header="j/k: move  enter: $1  /: search  q/esc: quit"
-  local search_header="ctrl-j/k: move  enter: $1  esc: back"
+  local search_header="enter: $1  esc: back"
   normal_mode_binds=(
     "$(normal_key j down)"
     "$(normal_key k up)"
