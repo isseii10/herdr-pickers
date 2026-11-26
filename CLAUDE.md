@@ -1,6 +1,6 @@
 # herdr-pickers
 
-A herdr plugin (`isseii10.herdr-pickers`): bash + fzf + jq. Published on GitHub with the `herdr-plugin` topic. herdr.dev/plugins indexes the default branch automatically, so every push to `main` is a release that users see. Work on a branch, push it so CI runs, and merge into `main` only when the user explicitly says to merge. `.claude/settings.json` backs this up: pushing to `main` or `gh pr merge` asks the user first (permission rules plus `.claude/hooks/ask-before-main`).
+A herdr plugin (`isseii10.herdr-pickers`): bash + fzf + jq. Published on GitHub with the `herdr-plugin` topic. herdr.dev/plugins indexes the default branch automatically, so every push to `main` is a release that users see. Work on a branch, push it so CI runs, and merge into `main` only when the user explicitly says to merge.
 
 ## How the pieces connect
 
