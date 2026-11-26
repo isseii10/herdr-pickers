@@ -11,6 +11,7 @@ set -euo pipefail
 . "$(dirname "$0")/../lib/common.sh"
 
 require_fzf
+mode_binds select
 require jq zoxide
 
 ws_json="$("$herdr" workspace list)"
@@ -41,7 +42,7 @@ selected="$(
   cat "$tmp/workspaces" "$tmp/dirs" |
     fzf "${match[@]}" --no-sort --tabstop=1 --reverse --prompt='workspace> ' \
       --with-shell='bash -c' --bind="change:reload-sync:$reload" \
-      --no-input --header='j/k: move  enter: select  /: search  q/esc: quit' \
+      --no-input --header="$normal_header" \
       "${normal_mode_binds[@]}"
 )" || exit 0
 rm -rf "$tmp"

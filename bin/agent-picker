@@ -8,6 +8,7 @@ set -euo pipefail
 . "$(dirname "$0")/../lib/common.sh"
 
 require_fzf
+mode_binds focus
 require jq
 
 : "${HERDR_PICKERS_AGENT_TITLE_MAX:=50}"
@@ -53,7 +54,7 @@ selected="$(
     | "\(.pane_id)\t\($icon)\($reset)  \(.title | pad($tw))  \($blue)\(.ws | pad($ww))\($reset)  \($gray)\(.name // "")\($reset)\t\(if .focused then " \($green)󰄾 current\($reset)" else "" end)"
   ' <<<"$agents_json" |
     fzf --ansi --delimiter='\t' --with-nth=2,3 --nth=1 --tabstop=1 --tiebreak=index --reverse --prompt='agent> ' \
-      --no-input --header='j/k: move  enter: focus  /: search  q/esc: quit' \
+      --no-input --header="$normal_header" \
       --preview="$(printf '%q' "$herdr") agent read {1} --lines $HERDR_PICKERS_AGENT_PREVIEW_LINES --ansi" \
       --preview-window='down,60%,follow' \
       "${normal_mode_binds[@]}"

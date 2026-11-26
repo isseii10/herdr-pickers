@@ -56,17 +56,23 @@ require_fzf() {
 
 # --- fzf "normal mode" --------------------------------------------------------
 # Start with the input hidden and move with j/k; `/` shows the input for fuzzy
-# search (j/k/q are then typed as text), esc hides it again (or quits).
+# search (j/k/q are then typed as text), esc hides it again (or quits). The
+# header shows the keys of the current mode: while searching, fzf's own
+# ctrl-j/ctrl-k move instead of j/k.
 normal_key() { # <key> <action in normal mode>
   printf -- "--bind=%s:transform:[ \"\$FZF_INPUT_STATE\" = enabled ] && echo 'put(%s)' || echo '%s'" "$1" "$1" "$2"
 }
-normal_mode_binds=(
-  "$(normal_key j down)"
-  "$(normal_key k up)"
-  "$(normal_key g first)"
-  "$(normal_key G last)"
-  "$(normal_key q abort)"
-  "$(normal_key / show-input)"
-  # clear-query does not work inside transform output, so it runs outside (no-op in normal mode)
-  "--bind=esc:clear-query+transform:[ \"\$FZF_INPUT_STATE\" = enabled ] && echo hide-input || echo abort"
-)
+mode_binds() { # <what enter does>; sets normal_header and normal_mode_binds
+  normal_header="j/k: move  enter: $1  /: search  q/esc: quit"
+  local search_header="ctrl-j/k: move  enter: $1  esc: back"
+  normal_mode_binds=(
+    "$(normal_key j down)"
+    "$(normal_key k up)"
+    "$(normal_key g first)"
+    "$(normal_key G last)"
+    "$(normal_key q abort)"
+    "$(normal_key / "show-input+change-header:$search_header")"
+    # clear-query does not work inside transform output, so it runs outside (no-op in normal mode)
+    "--bind=esc:clear-query+transform:[ \"\$FZF_INPUT_STATE\" = enabled ] && echo 'hide-input+change-header:$normal_header' || echo abort"
+  )
+}
