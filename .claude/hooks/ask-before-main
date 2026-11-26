@@ -8,8 +8,10 @@
 # out, and the same commands inside compound commands.
 
 input="$(cat)"
-cmd="$(jq -r '.tool_input.command // empty' <<<"$input")"
 cwd="$(jq -r '.cwd // empty' <<<"$input")"
+# Drop quoted text first, so words in a commit message or an echo don't count.
+cmd="$(jq -r '.tool_input.command // empty' <<<"$input" |
+  sed -E "s/'[^']*'//g; s/\"([^\"\\\\]|\\\\.)*\"//g")"
 
 ask() {
   jq -n --arg reason "$1" '{hookSpecificOutput: {hookEventName: "PreToolUse",
