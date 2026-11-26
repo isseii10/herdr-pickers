@@ -23,7 +23,13 @@ for f in "${files[@]}"; do
   if [ -z "$query" ]; then
     cat "$f"
   else
-    fzf "$@" --filter "$query" <"$f" # exits 1 when nothing matches
+    # fzf --filter --ansi prints lines with their colors stripped, so it only
+    # decides the order: each result is swapped back for the original colored
+    # line, looked up by its first two columns (kind and id/path, uncolored).
+    # shellcheck disable=SC2094 # both sides only read "$f"
+    fzf "$@" --filter "$query" <"$f" | # exits 1 when nothing matches
+      awk -F'\t' 'NR == FNR { line[$1 FS $2] = $0; next }
+                  ($1 FS $2) in line { print line[$1 FS $2] }' "$f" -
   fi
 done
 exit 0
