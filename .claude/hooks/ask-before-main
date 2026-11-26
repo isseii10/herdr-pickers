@@ -1,0 +1,33 @@
+#!/usr/bin/env bash
+#
+# PreToolUse hook (Bash): ask the user before anything that would put commits
+# on main, because every push to main is a release (see CLAUDE.md).
+#
+# The permission "ask" rules in settings.json catch pushes that name main. This
+# hook adds what a rule can't see: a push with no refspec while main is checked
+# out, and the same commands inside compound commands.
+
+input="$(cat)"
+cmd="$(jq -r '.tool_input.command // empty' <<<"$input")"
+cwd="$(jq -r '.cwd // empty' <<<"$input")"
+
+ask() {
+  jq -n --arg reason "$1" '{hookSpecificOutput: {hookEventName: "PreToolUse",
+    permissionDecision: "ask", permissionDecisionReason: $reason}}'
+  exit 0
+}
+
+if [[ "$cmd" =~ (^|[^[:alnum:]_-])gh[[:space:]]+pr[[:space:]]+merge ]]; then
+  ask "Merging a pull request into main publishes a release. Merge only when the user said so."
+fi
+
+if [[ "$cmd" =~ (^|[^[:alnum:]_-])git[[:space:]]+([^;&|]*[[:space:]])?push([[:space:]]|$) ]]; then
+  if [[ "$cmd" =~ (^|[[:space:]:/])main([[:space:]]|$) ]]; then
+    ask "This pushes to main, which publishes a release. Push only when the user said to merge."
+  fi
+  branch="$(git -C "${cwd:-.}" symbolic-ref --quiet --short HEAD 2>/dev/null)"
+  if [ "$branch" = main ]; then
+    ask "main is checked out, so this push may update main and publish a release. Push only when the user said to merge."
+  fi
+fi
+exit 0

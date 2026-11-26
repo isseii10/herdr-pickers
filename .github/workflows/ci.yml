@@ -18,10 +18,10 @@ jobs:
           persist-credentials: false
 
       - name: bash -n
-        run: for f in bin/* lib/* demo/herdr demo/bin/* demo/shell demo/session-setup demo/screenshots; do bash -n "$f"; done
+        run: for f in bin/* lib/* demo/herdr demo/bin/* demo/shell demo/session-setup demo/screenshots .claude/hooks/*; do bash -n "$f"; done
 
       - name: shellcheck
-        run: shellcheck -x bin/* lib/* demo/herdr demo/bin/* demo/shell demo/session-setup demo/screenshots
+        run: shellcheck -x bin/* lib/* demo/herdr demo/bin/* demo/shell demo/session-setup demo/screenshots .claude/hooks/*
 
       # Every push to main is what herdr.dev/plugins serves, so the manifest must
       # parse and point at files that exist.
