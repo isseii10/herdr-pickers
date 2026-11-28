@@ -10,7 +10,7 @@ A herdr plugin (`isseii10.herdr-vipicker`): bash + fzf + jq. Published on GitHub
 - Major: a change that breaks any of these, so a user must edit `config.toml` or `config.env`, or relearn a key. Add migration steps to the README, as was done for the herdr-pickers rename.
 - Minor: something new that keeps existing setups working (a new picker, setting or key).
 - Patch: fixes and changes that don't change behaviour.
-- No bump for changes users don't get (CI, CLAUDE.md, `.claude/`, demo).
+- No bump for changes that don't touch what the plugin does: docs (README, screenshots), CI, CLAUDE.md, `.claude/`, demo.
 
 ## How the pieces connect
 
