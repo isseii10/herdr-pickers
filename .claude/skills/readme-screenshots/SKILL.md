@@ -5,7 +5,7 @@ description: Regenerate the README screenshots (docs/images/*.png) from demo mod
 
 # README screenshots
 
-The screenshots come from **demo mode**, never from the user's real herdr session: a real session shows their directories, workspace names, agent titles and agent output, and the README is public. `demo/screenshots` runs `demo/screenshots.tape` in VHS against a throwaway herdr session (`herdr-vipicker-demo`) with made-up data (`demo/herdr`, `demo/bin/zoxide`) and a plain `$ ` shell (`demo/shell`), then deletes the session and restores `config.env`.
+The screenshots come from **demo mode**, never from the user's real herdr session: a real session shows their directories, workspace names, agent titles and agent output, and the README is public. `demo/screenshots` runs `demo/screenshots.tape` in VHS against a throwaway herdr session (`herdr-vipicker-demo`) with made-up data (`demo/herdr`, `demo/bin/zoxide`) a plain `$ ` shell (`demo/shell`) and herdr's default config (`demo/herdr-config.toml`, via `HERDR_CONFIG_PATH`, so the user's theme and sidebar rows don't show), then deletes the session and restores `config.env`.
 
 ## Steps
 
@@ -21,6 +21,8 @@ The screenshots come from **demo mode**, never from the user's real herdr sessio
 7. Commit the images on the work branch.
 
 ## When a shot is wrong
+
+- **Sidebar or theme looks like the user's own herdr:** `HERDR_CONFIG_PATH` didn't reach the session. `demo/screenshots` must export it after the loop that unsets `HERDR_*`.
 
 - **Shot shows a later or earlier state:** VHS captures with a lag. Lengthen the `Sleep` around that `Screenshot` in the tape.
 - **Text from the pane shows behind the popup:** the typed command printed output. Redirect it to `/dev/null` in the tape.

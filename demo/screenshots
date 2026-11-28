@@ -43,4 +43,6 @@ export DEMO_ROOT DEMO_DIR
 # Drop the variables that tie this shell to the herdr session it runs in, so the
 # session inside VHS is a separate one.
 while read -r var; do unset "$var"; done < <(compgen -e | grep '^HERDR_' || true)
+# herdr's default look, not your config.toml.
+export HERDR_CONFIG_PATH="$PWD/demo/herdr-config.toml"
 SHELL="$PWD/demo/shell" "${vhs[@]}" demo/screenshots.tape

@@ -1,0 +1,5 @@
+# herdr config for the screenshot session: herdr's defaults, so the screenshots
+# show herdr as a new user sees it, not your own config.toml (theme, sidebar
+# rows, ...). demo/screenshots points HERDR_CONFIG_PATH here.
+
+onboarding = false
