@@ -4,12 +4,11 @@ A herdr plugin (`isseii10.herdr-vipicker`): bash + fzf + jq. Published on GitHub
 
 ## Versioning
 
-`version` in `herdr-plugin.toml` stays at 0.x: the major is 0 until the user decides otherwise. A breaking change bumps the minor, not the major. Bump it on the branch, in the same change that needs it.
+`version` in `herdr-plugin.toml` stays at 0.x until the user decides otherwise. Bump it on the branch, in the change that needs it, by what the change does to the plugin's *contract*: the plugin id, the action ids (`workspace`, `agent`), the `config.env` setting names and their meaning, and the picker keys (`j`/`k`, `g`/`G`, `/`, `esc`, `enter`, `q`).
 
-- What users rely on: the plugin id, the action ids (`workspace`, `agent`), the `config.env` setting names and what they mean, and the picker keys (`j`/`k`, `g`/`G`, `/`, `esc`, `enter`, `q`).
-- Minor: a change that breaks any of these, so a user must edit `config.toml` or `config.env`, or relearn a key. Add migration steps to the README, as was done for the herdr-pickers rename. Something new (a new picker, setting or key) also bumps the minor.
-- Patch: bug fixes, and changes to the plugin's scripts that keep its behaviour.
-- No bump for changes that don't touch what the plugin does: docs (README, screenshots), CI, CLAUDE.md, `.claude/`, demo.
+- Minor: the change breaks the contract (a user edits `config.toml` or `config.env`, or relearns a key) or adds to it (a new picker, setting or key). A break also gets migration steps in the README, like "Migrating from herdr-pickers".
+- Patch: bug fixes and script changes that keep the contract.
+- None: docs (README, screenshots), CI, CLAUDE.md, `.claude/`, demo.
 
 ## How the pieces connect
 
