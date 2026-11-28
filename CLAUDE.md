@@ -2,6 +2,16 @@
 
 A herdr plugin (`isseii10.herdr-vipicker`): bash + fzf + jq. Published on GitHub with the `herdr-plugin` topic. herdr.dev/plugins indexes the default branch automatically, so every push to `main` is a release that users see. Work on a branch, push it so CI runs, and merge into `main` only when the user explicitly says to merge.
 
+## Versioning
+
+`version` in `herdr-plugin.toml` follows semver from 1.0.0. Bump it on the branch, in the same change that needs it.
+
+- What users rely on: the plugin id, the action ids (`workspace`, `agent`), the `config.env` setting names and what they mean, and the picker keys (`j`/`k`, `g`/`G`, `/`, `esc`, `enter`, `q`).
+- Major: a change that breaks any of these, so a user must edit `config.toml` or `config.env`, or relearn a key. Add migration steps to the README, as was done for the herdr-pickers rename.
+- Minor: something new that keeps existing setups working (a new picker, setting or key).
+- Patch: fixes and changes that don't change behaviour.
+- No bump for changes users don't get (CI, CLAUDE.md, `.claude/`, demo).
+
 ## How the pieces connect
 
 - A key with `type = "plugin_action"` can only invoke an action, not open a pane. So each action runs `bin/open-picker <name>`, which calls `herdr plugin pane open --placement popup` for the matching `[[panes]]` entry.
