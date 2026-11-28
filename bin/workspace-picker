@@ -18,7 +18,7 @@ ws_json="$("$herdr" workspace list)"
 
 # Columns: kind, id/path (hidden), icon + name (searched), "current" marker.
 # --tabstop=1 makes the tab before the marker one column wide.
-tmp="$(mktemp -d "${TMPDIR:-/tmp}/herdr-pickers.XXXXXX")"
+tmp="$(mktemp -d "${TMPDIR:-/tmp}/herdr-vipicker.XXXXXX")"
 trap 'rm -rf "$tmp"' EXIT
 jq -r --arg blue "$blue" --arg green "$green" --arg reset "$reset" \
   '.result.workspaces[] | "ws\t\(.workspace_id)\t\($blue)󰙅\($reset)  \(.label)\t\(if .focused then " \($green)󰄾 current\($reset)" else "" end)"' \

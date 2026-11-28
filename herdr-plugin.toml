@@ -1,6 +1,6 @@
-id = "isseii10.herdr-pickers"
-name = "herdr-pickers"
-version = "0.6.3"
+id = "isseii10.herdr-vipicker"
+name = "herdr-vipicker"
+version = "0.7.0"
 min_herdr_version = "0.9.5"
 platforms = ["macos", "linux"]
 description = "fzf pickers in a popup: switch/create workspaces from zoxide dirs, and jump to a running agent with a live output preview."
@@ -11,13 +11,13 @@ description = "fzf pickers in a popup: switch/create workspaces from zoxide dirs
 
 [[actions]]
 id = "workspace"
-title = "pickers: switch / create workspace (zoxide)"
+title = "vipicker: switch / create workspace (zoxide)"
 contexts = ["global"]
 command = ["bash", "bin/open-picker", "workspace"]
 
 [[actions]]
 id = "agent"
-title = "pickers: jump to agent"
+title = "vipicker: jump to agent"
 contexts = ["global"]
 command = ["bash", "bin/open-picker", "agent"]
 

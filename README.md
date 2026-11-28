@@ -1,4 +1,4 @@
-# herdr-pickers
+# herdr-vipicker
 
 Two small fzf pickers for [herdr](https://herdr.dev): jump to a workspace (or open one from your zoxide directories), and jump to a running agent with a live preview of its output.
 
@@ -55,13 +55,13 @@ The pickers find fzf, jq and zoxide on herdr's `PATH`. When one isn't there (for
 ## Install
 
 ```sh
-herdr plugin install isseii10/herdr-pickers
+herdr plugin install isseii10/herdr-vipicker
 ```
 
 To try a local checkout instead:
 
 ```sh
-herdr plugin link /path/to/herdr-pickers
+herdr plugin link /path/to/herdr-vipicker
 ```
 
 ## Uninstall
@@ -70,14 +70,34 @@ herdr plugin link /path/to/herdr-pickers
 2. Uninstall the plugin:
 
    ```sh
-   herdr plugin uninstall isseii10.herdr-pickers
+   herdr plugin uninstall isseii10.herdr-vipicker
    ```
 
-   If you linked a local checkout, run `herdr plugin unlink isseii10.herdr-pickers` instead.
+   If you linked a local checkout, run `herdr plugin unlink isseii10.herdr-vipicker` instead.
 3. herdr keeps the plugin's config directory. If you created a `config.env`, delete it yourself:
 
    ```sh
-   rm -r "$(herdr plugin config-dir isseii10.herdr-pickers)"
+   rm -r "$(herdr plugin config-dir isseii10.herdr-vipicker)"
+   ```
+
+## Migrating from herdr-pickers
+
+This plugin was called `herdr-pickers` (`isseii10.herdr-pickers`) up to 0.6.x. The plugin id, the config directory and the setting names have changed, so the old setup does not carry over by itself:
+
+1. Install the new plugin and uninstall the old one:
+
+   ```sh
+   herdr plugin install isseii10/herdr-vipicker
+   herdr plugin uninstall isseii10.herdr-pickers
+   ```
+
+2. In your herdr `config.toml`, change `isseii10.herdr-pickers.workspace` / `.agent` to `isseii10.herdr-vipicker.workspace` / `.agent` ([Key bindings](#key-bindings)), then run `herdr server reload-config`.
+3. If you had a `config.env`, move it to the new config directory and rename the settings from `HERDR_PICKERS_*` to `HERDR_VIPICKER_*`:
+
+   ```sh
+   old="$(herdr plugin config-dir isseii10.herdr-pickers)"
+   new="$(herdr plugin config-dir isseii10.herdr-vipicker)"
+   mkdir -p "$new" && sed 's/HERDR_PICKERS_/HERDR_VIPICKER_/g' "$old/config.env" > "$new/config.env" && rm -r "$old"
    ```
 
 ## Key bindings
@@ -89,22 +109,22 @@ The plugin does not bind any keys itself. Add these to your herdr `config.toml`,
 [[keys.command]]
 key = "prefix+s"
 type = "plugin_action"
-command = "isseii10.herdr-pickers.workspace"
+command = "isseii10.herdr-vipicker.workspace"
 description = "workspace picker"
 
 # prefix+a: jump to a running agent (with output preview)
 [[keys.command]]
 key = "prefix+a"
 type = "plugin_action"
-command = "isseii10.herdr-pickers.agent"
+command = "isseii10.herdr-vipicker.agent"
 description = "agent picker"
 ```
 
 You can also run them from the CLI:
 
 ```sh
-herdr plugin action invoke workspace --plugin isseii10.herdr-pickers
-herdr plugin action invoke agent --plugin isseii10.herdr-pickers
+herdr plugin action invoke workspace --plugin isseii10.herdr-vipicker
+herdr plugin action invoke agent --plugin isseii10.herdr-vipicker
 ```
 
 ## Configuration
@@ -112,15 +132,15 @@ herdr plugin action invoke agent --plugin isseii10.herdr-pickers
 Settings are shell variables in `config.env`, in the plugin's config directory:
 
 ```sh
-cp config.env.example "$(herdr plugin config-dir isseii10.herdr-pickers)/config.env"
+cp config.env.example "$(herdr plugin config-dir isseii10.herdr-vipicker)/config.env"
 ```
 
 | variable | default | |
 | --- | --- | --- |
-| `HERDR_PICKERS_WORKSPACE_WIDTH` / `_HEIGHT` | `70%` / `70%` | workspace popup size (`"80%"` or a number of cells) |
-| `HERDR_PICKERS_AGENT_WIDTH` / `_HEIGHT` | `70%` / `70%` | agent popup size |
-| `HERDR_PICKERS_AGENT_TITLE_MAX` | `50` | longer agent titles are cut with `…` |
-| `HERDR_PICKERS_AGENT_PREVIEW_LINES` | `200` | lines of agent output in the preview |
+| `HERDR_VIPICKER_WORKSPACE_WIDTH` / `_HEIGHT` | `70%` / `70%` | workspace popup size (`"80%"` or a number of cells) |
+| `HERDR_VIPICKER_AGENT_WIDTH` / `_HEIGHT` | `70%` / `70%` | agent popup size |
+| `HERDR_VIPICKER_AGENT_TITLE_MAX` | `50` | longer agent titles are cut with `…` |
+| `HERDR_VIPICKER_AGENT_PREVIEW_LINES` | `200` | lines of agent output in the preview |
 
 A value set in `config.env` overrides the same variable from the environment.
 

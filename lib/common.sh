@@ -8,7 +8,7 @@ herdr="${HERDR_BIN_PATH:-herdr}"
 # User settings live in $HERDR_PLUGIN_CONFIG_DIR/config.env (plain shell,
 # `KEY=value` lines). Variables already set in the environment win over the
 # built-in defaults below, and config.env wins over both.
-config_file="${HERDR_PLUGIN_CONFIG_DIR:-\$(herdr plugin config-dir isseii10.herdr-pickers)}/config.env"
+config_file="${HERDR_PLUGIN_CONFIG_DIR:-\$(herdr plugin config-dir isseii10.herdr-vipicker)}/config.env"
 if [ -f "$config_file" ]; then
   # shellcheck source=/dev/null
   . "$config_file"
@@ -32,7 +32,7 @@ reset=$'\e[0m'
 # --- dependency checks --------------------------------------------------------
 # A popup closes as soon as its command exits, so errors wait for a key press.
 die() {
-  printf 'herdr-pickers: %s\n\n(press any key to close)' "$*" >&2
+  printf 'herdr-vipicker: %s\n\n(press any key to close)' "$*" >&2
   read -r -n1 -s || true
   exit 1
 }

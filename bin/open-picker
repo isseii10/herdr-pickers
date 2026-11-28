@@ -3,7 +3,7 @@
 # Action entry point: open a picker popup pane.
 #   open-picker workspace|agent
 # Popup size defaults come from herdr-plugin.toml; config.env can override them
-# with HERDR_PICKERS_<WORKSPACE|AGENT>_<WIDTH|HEIGHT> (e.g. "60%" or 100 cells).
+# with HERDR_VIPICKER_<WORKSPACE|AGENT>_<WIDTH|HEIGHT> (e.g. "60%" or 100 cells).
 
 set -euo pipefail
 
@@ -15,15 +15,15 @@ if [ -n "${HERDR_PLUGIN_CONFIG_DIR:-}" ] && [ -f "$config_file" ]; then
 fi
 
 case "${1:-}" in
-  workspace) entry="workspace-picker" w="${HERDR_PICKERS_WORKSPACE_WIDTH:-}" h="${HERDR_PICKERS_WORKSPACE_HEIGHT:-}" ;;
-  agent) entry="agent-picker" w="${HERDR_PICKERS_AGENT_WIDTH:-}" h="${HERDR_PICKERS_AGENT_HEIGHT:-}" ;;
+  workspace) entry="workspace-picker" w="${HERDR_VIPICKER_WORKSPACE_WIDTH:-}" h="${HERDR_VIPICKER_WORKSPACE_HEIGHT:-}" ;;
+  agent) entry="agent-picker" w="${HERDR_VIPICKER_AGENT_WIDTH:-}" h="${HERDR_VIPICKER_AGENT_HEIGHT:-}" ;;
   *)
     echo "usage: open-picker workspace|agent" >&2
     exit 2
     ;;
 esac
 
-args=(plugin pane open --plugin "${HERDR_PLUGIN_ID:-isseii10.herdr-pickers}" --entrypoint "$entry" --placement popup)
+args=(plugin pane open --plugin "${HERDR_PLUGIN_ID:-isseii10.herdr-vipicker}" --entrypoint "$entry" --placement popup)
 [ -n "$w" ] && args+=(--width "$w")
 [ -n "$h" ] && args+=(--height "$h")
 

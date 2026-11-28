@@ -1,6 +1,6 @@
-# herdr-pickers
+# herdr-vipicker
 
-A herdr plugin (`isseii10.herdr-pickers`): bash + fzf + jq. Published on GitHub with the `herdr-plugin` topic. herdr.dev/plugins indexes the default branch automatically, so every push to `main` is a release that users see. Work on a branch, push it so CI runs, and merge into `main` only when the user explicitly says to merge.
+A herdr plugin (`isseii10.herdr-vipicker`): bash + fzf + jq. Published on GitHub with the `herdr-plugin` topic. herdr.dev/plugins indexes the default branch automatically, so every push to `main` is a release that users see. Work on a branch, push it so CI runs, and merge into `main` only when the user explicitly says to merge.
 
 ## How the pieces connect
 
@@ -15,7 +15,7 @@ A herdr plugin (`isseii10.herdr-pickers`): bash + fzf + jq. Published on GitHub 
 
 ## Testing
 
-- Install the working tree with `herdr plugin link .`. Run actions with `herdr plugin action invoke workspace|agent --plugin isseii10.herdr-pickers`, and read the results with `herdr plugin log list`.
+- Install the working tree with `herdr plugin link .`. Run actions with `herdr plugin action invoke workspace|agent --plugin isseii10.herdr-vipicker`, and read the results with `herdr plugin log list`.
 - An invoked popup takes over the user's live herdr screen and has no pane id, so it can't be driven or closed from the CLI. To test end to end, use a temporary `config.env` that puts a stub `fzf` first in `PATH` (`PATH="/path/to/stub:$PATH"`). The stub records its args and stdin, then exits 130 (abort), or prints a harmless line such as the `current` workspace. Delete the temporary `config.env` afterwards.
 - To check that fzf accepts the options, have the stub run the real fzf with the same args plus `--filter ''`. Key behaviour (j/k, `/`, esc) can only be checked by a human in a real popup.
 - CI (`.github/workflows/ci.yml`) runs `bash -n`, `shellcheck -x` and a manifest check on every push. Run its `run:` commands locally before pushing; when adding a script, add it to them. A variable that `lib/common.sh` sets for the scripts that source it is covered by its file-wide SC2034 disable.
