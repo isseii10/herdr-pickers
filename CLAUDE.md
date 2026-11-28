@@ -4,7 +4,7 @@ A herdr plugin (`isseii10.herdr-vipicker`): bash + fzf + jq. Published on GitHub
 
 ## Versioning
 
-`version` in `herdr-plugin.toml` stays at 0.x: the major is 0 until the user decides otherwise. Like most herdr plugins, a breaking change bumps the minor, not the major. Bump it on the branch, in the same change that needs it.
+`version` in `herdr-plugin.toml` stays at 0.x: the major is 0 until the user decides otherwise. A breaking change bumps the minor, not the major. Bump it on the branch, in the same change that needs it.
 
 - What users rely on: the plugin id, the action ids (`workspace`, `agent`), the `config.env` setting names and what they mean, and the picker keys (`j`/`k`, `g`/`G`, `/`, `esc`, `enter`, `q`).
 - Minor: a change that breaks any of these, so a user must edit `config.toml` or `config.env`, or relearn a key. Add migration steps to the README, as was done for the herdr-pickers rename. Something new (a new picker, setting or key) also bumps the minor.
